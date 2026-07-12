@@ -35,7 +35,7 @@ public class SoftwareEngineerService {
     @Cacheable(value = "engineers", key = "#id")
     public SoftwareEngineer getOneEngineer(Integer id) {
         System.out.println("Fetching from DATABASE for id: " + id);
-        return softwareEngineerRepository.findById(id).orElseThrow(() -> new RuntimeException("Engineer not found"));
+        return softwareEngineerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Engineer not found with id: " + id));
 
     }
 }
