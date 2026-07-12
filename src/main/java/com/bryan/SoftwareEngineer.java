@@ -1,6 +1,7 @@
 package com.bryan;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.Objects;
 
@@ -9,7 +10,12 @@ import java.util.Objects;
 public class SoftwareEngineer {
 
     @Id
+    // if we use GeneratedValue, in controller CachePut, we have to use key="#result.id"
+    // if no generated Value, we can use id
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @NotBlank(message = "Name should not be blank")
     private String name;
     private String techStack;
 

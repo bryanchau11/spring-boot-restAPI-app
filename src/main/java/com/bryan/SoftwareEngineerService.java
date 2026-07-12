@@ -19,6 +19,10 @@ public class SoftwareEngineerService {
     public List<SoftwareEngineer> getAllSoftwareEngineers() {
         return softwareEngineerRepository.findAll();
     }
+
+    public List<SoftwareEngineer> getEngineersByTechStack(String techStack) {
+        return softwareEngineerRepository.findByTechStackContainingIgnoreCase(techStack);
+    }
     @CachePut(value = "engineers", key = "#id")
     public SoftwareEngineer createSWE(Integer id, String name, String techStack) {
         SoftwareEngineer swe = new SoftwareEngineer();
@@ -26,7 +30,6 @@ public class SoftwareEngineerService {
         swe.setName(name);
         swe.setTechStack(techStack);
         return softwareEngineerRepository.save(swe);
-
     }
     @CacheEvict(value = "engineers", key = "#softwareEngineer.id")
     public void deleteSWE(SoftwareEngineer softwareEngineer) {
