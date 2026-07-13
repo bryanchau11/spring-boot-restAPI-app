@@ -8,27 +8,32 @@ import java.util.List;
 @RequestMapping("/api/v1/software-engineers")
 public class SoftwareEngineerController {
     private final SoftwareEngineerService softwareEngineerService;
+    private final SoftwareEngineerDTOMapper softwareEngineerDTOMapper;
 
-    public SoftwareEngineerController(SoftwareEngineerService softwareEngineerService) {
+    public SoftwareEngineerController(SoftwareEngineerService softwareEngineerService, SoftwareEngineerDTOMapper softwareEngineerDTOMapper) {
         this.softwareEngineerService = softwareEngineerService;
+        this.softwareEngineerDTOMapper = softwareEngineerDTOMapper;
     }
 
     @GetMapping
-    public List<SoftwareEngineer> getEngineers() {
+    public List<SoftwareEngineerDTO> getEngineers() {
         System.out.println("DEBUG: Called getEngineers() [ALL]");
-        return softwareEngineerService.getAllSoftwareEngineers();
+        return softwareEngineerService.getAllSoftwareEngineers().stream()
+                .map(softwareEngineerDTOMapper)
+                .toList();
     }
 
     // This method fetches software engineers by their technology stack
     @GetMapping(params = "techStack")
-    public List<SoftwareEngineer> getEngineersByTechStack(@RequestParam String techStack) {
+    public List<SoftwareEngineerDTO> getEngineersByTechStack(@RequestParam(name = "techStack") String techStack) {
         System.out.println("DEBUG: Called getEngineersByTechStack() with: " + techStack);
-        return softwareEngineerService.getEngineersByTechStack(techStack);
+        return softwareEngineerService.getEngineersByTechStack(techStack).stream().map(softwareEngineerDTOMapper).toList();
     }
 
     @PostMapping
-    public SoftwareEngineer createSWE(@RequestBody SoftwareEngineer softwareEngineer) {
-        return softwareEngineerService.createSWE(softwareEngineer.getId(), softwareEngineer.getName(), softwareEngineer.getTechStack());
+    public SoftwareEngineerDTO createSWE(@RequestBody SoftwareEngineer softwareEngineer) {
+        SoftwareEngineer saved = softwareEngineerService.createSWE(softwareEngineer.getId(), softwareEngineer.getName(), softwareEngineer.getTechStack());
+        return softwareEngineerDTOMapper.apply(saved);
     }
 
     @DeleteMapping
@@ -37,7 +42,9 @@ public class SoftwareEngineerController {
     }
 
     @GetMapping("/{id}")
-    public SoftwareEngineer getOneEngineer(@PathVariable Integer id) {
-        return softwareEngineerService.getOneEngineer(id);
+    public SoftwareEngineerDTO getOneEngineer(@PathVariable Integer id) {
+        SoftwareEngineer engineer = softwareEngineerService.getOneEngineer(id);
+
+        return softwareEngineerDTOMapper.apply(engineer);
     }
 }

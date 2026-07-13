@@ -10,7 +10,6 @@ import java.util.List;
 @Service
 public class SoftwareEngineerService {
     private final SoftwareEngineerRepository softwareEngineerRepository;
-
     public SoftwareEngineerService(
             SoftwareEngineerRepository softwareEngineerRepository
     ) {
@@ -23,7 +22,7 @@ public class SoftwareEngineerService {
     public List<SoftwareEngineer> getEngineersByTechStack(String techStack) {
         return softwareEngineerRepository.findByTechStackContainingIgnoreCase(techStack);
     }
-    @CachePut(value = "engineers", key = "#id")
+    @CachePut(value = "engineers", key = "#result.id")
     public SoftwareEngineer createSWE(Integer id, String name, String techStack) {
         SoftwareEngineer swe = new SoftwareEngineer();
         swe.setId(id);
@@ -38,8 +37,9 @@ public class SoftwareEngineerService {
     @Cacheable(value = "engineers", key = "#id")
     public SoftwareEngineer getOneEngineer(Integer id) {
         System.out.println("Fetching from DATABASE for id: " + id);
-        return softwareEngineerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Engineer not found with id: " + id));
-
+        return softwareEngineerRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Engineer not found with id: " + id));
     }
+
 }
 
